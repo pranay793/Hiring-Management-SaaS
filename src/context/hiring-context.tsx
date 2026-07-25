@@ -82,6 +82,9 @@ interface HiringContextType {
   addJob: (job: Omit<Job, "id" | "applicantsCount">) => void;
   updateUserRole: (role: UserRole) => void;
   updateOrgName: (name: string) => void;
+  isAuthenticated: boolean;
+  loginUser: (role: UserRole) => void;
+  logoutUser: () => void;
 }
 
 const HiringContext = createContext<HiringContextType | undefined>(undefined);
@@ -397,6 +400,27 @@ export function HiringProvider({ children }: { children: React.ReactNode }) {
   const [logs, setLogs] = useState<ActivityLog[]>(initialLogs);
   const [userRole, setUserRole] = useState<UserRole>("Admin"); // Default to Admin for full toggle capabilities
   const [currentOrg, setCurrentOrg] = useState("Vercel & Co.");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const auth = localStorage.getItem("recruitflow_auth");
+    if (auth === "true") {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const loginUser = (role: UserRole) => {
+    setIsAuthenticated(true);
+    localStorage.setItem("recruitflow_auth", "true");
+    updateUserRole(role);
+    addLog("logged into the platform as role", role);
+  };
+
+  const logoutUser = () => {
+    setIsAuthenticated(false);
+    localStorage.setItem("recruitflow_auth", "false");
+    addLog("logged out of the platform", "");
+  };
 
   const updateCandidateStatus = (id: string, status: PipelineStage) => {
     setCandidates((prev) =>
@@ -516,7 +540,10 @@ export function HiringProvider({ children }: { children: React.ReactNode }) {
         cancelInterview,
         addJob,
         updateUserRole,
-        updateOrgName
+        updateOrgName,
+        isAuthenticated,
+        loginUser,
+        logoutUser
       }}
     >
       {children}

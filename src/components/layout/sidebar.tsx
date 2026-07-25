@@ -46,7 +46,7 @@ interface SidebarProps {
 export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { userRole, updateUserRole, currentOrg, updateOrgName } = useHiring();
+  const { userRole, updateUserRole, currentOrg, updateOrgName, logoutUser } = useHiring();
   const { theme, toggleTheme } = useTheme();
   
   const [showWorkspaceMenu, setShowWorkspaceMenu] = useState(false);
@@ -173,15 +173,26 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
       {/* Sidebar Footer - Settings / Theme / Role switcher */}
       <div className="p-4 border-t border-sidebar-border space-y-3 bg-slate-50/50 dark:bg-slate-900/30">
-        {/* Toggle Theme / Toggle Collapse */}
+        {/* Toggle Theme / Logout / Toggle Collapse */}
         <div className="flex items-center justify-between">
-          <button
-            onClick={toggleTheme}
-            className="p-1.5 text-slate-500 dark:text-slate-400 hover:bg-slate-150 dark:hover:bg-slate-800 rounded-md transition-colors cursor-pointer"
-            title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
-          >
-            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={toggleTheme}
+              className="p-1.5 text-slate-500 dark:text-slate-400 hover:bg-slate-150 dark:hover:bg-slate-800 rounded-md transition-colors cursor-pointer"
+              title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+
+            <button
+              onClick={logoutUser}
+              className="p-1.5 text-rose-500 hover:bg-rose-100/50 dark:hover:bg-rose-950/20 rounded-md transition-colors cursor-pointer flex items-center gap-1.5"
+              title="Log Out"
+            >
+              <LogOut size={15} />
+              {isOpen && <span className="text-[10px] font-bold">Log Out</span>}
+            </button>
+          </div>
           
           <button
             onClick={() => setIsOpen(!isOpen)}
